@@ -32,106 +32,110 @@ const ContactsForm: ContactsFormComponent = ({
   };
 
   return (
-    <EuiForm
-      component="form"
-      id={formId}
-      onSubmit={handleSubmit(submitHandler)}
-    >
-      <Controller
-        name="name"
-        control={control}
-        rules={{ required: "Please enter the name" }}
-        render={({ field, fieldState }) => (
-          <EuiFormRow
-            label="Name"
-            helpText={!fieldState.invalid && "Friendly help text."}
-            isInvalid={fieldState.invalid}
-            error={fieldState.error?.message}
-          >
-            <EuiFieldText
-              placeholder={"e.g., John Doe"}
-              {...field}
+    <>
+      <EuiForm
+        component="form"
+        id={formId}
+        onSubmit={handleSubmit(submitHandler)}
+      >
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: "Please enter the name" }}
+          render={({ field, fieldState }) => (
+            <EuiFormRow
+              label="Name"
+              helpText={!fieldState.invalid && "Friendly help text."}
               isInvalid={fieldState.invalid}
-            />
-          </EuiFormRow>
-        )}
-      />
+              error={fieldState.error?.message}
+            >
+              <EuiFieldText
+                placeholder={"e.g., John Doe"}
+                {...field}
+                isInvalid={fieldState.invalid}
+              />
+            </EuiFormRow>
+          )}
+        />
 
-      <Controller
-        name="address"
-        control={control}
-        rules={{
-          required: "Please enter the address",
-        }}
-        render={({ field, fieldState }) => (
-          <EuiFormRow
-            label="Address"
-            helpText={!fieldState.invalid && "Friendly help text."}
-            isInvalid={fieldState.invalid}
-            error={fieldState.error?.message}
-          >
-            <EuiFieldText
-              placeholder={"e.g., Main St 123"}
-              {...field}
+        <Controller
+          name="address"
+          control={control}
+          rules={{
+            required: "Please enter the address",
+          }}
+          render={({ field, fieldState }) => (
+            <EuiFormRow
+              label="Address"
+              helpText={!fieldState.invalid && "Friendly help text."}
               isInvalid={fieldState.invalid}
-            />
-          </EuiFormRow>
-        )}
-      />
+              error={fieldState.error?.message}
+            >
+              <EuiFieldText
+                placeholder={"e.g., Main St 123"}
+                {...field}
+                isInvalid={fieldState.invalid}
+              />
+            </EuiFormRow>
+          )}
+        />
 
-      <Controller
-        name="age"
-        control={control}
-        rules={{
-          required: "Please enter the age",
-          min: {
-            value: 0,
-            message: "Age must be a positive number",
-          },
-        }}
-        render={({ field, fieldState }) => (
-          <EuiFormRow
-            label="Age"
-            helpText={!fieldState.invalid && "Friendly help text."}
-            isInvalid={fieldState.invalid}
-            error={fieldState.error?.message}
-          >
-            <EuiFieldNumber
-              placeholder={"e.g., 32"}
-              {...field}
+        <Controller
+          name="age"
+          control={control}
+          rules={{
+            required: "Please enter the age",
+            min: {
+              value: 0,
+              message: "Age must be a positive number",
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <EuiFormRow
+              label="Age"
+              helpText={!fieldState.invalid && "Friendly help text."}
               isInvalid={fieldState.invalid}
-            />
-          </EuiFormRow>
-        )}
-      />
+              error={fieldState.error?.message}
+            >
+              <EuiFieldNumber
+                placeholder={"e.g., 32"}
+                {...field}
+                isInvalid={fieldState.invalid}
+              />
+            </EuiFormRow>
+          )}
+        />
 
-      <Controller
-        name="role"
-        control={control}
-        rules={{
-          required: "Please select a role",
-        }}
-        render={({ field, fieldState }) => (
-          <EuiFormRow
-            label="Role"
-            helpText={!fieldState.invalid && "Friendly help text."}
-            isInvalid={fieldState.invalid}
-            error={fieldState.error?.message}
-          >
-            <EuiSelect
-              hasNoInitialSelection
-              options={roleOptions}
-              {...field}
+        <Controller
+          name="role"
+          control={control}
+          rules={{
+            required: "Please select a role",
+          }}
+          render={({ field, fieldState }) => (
+            <EuiFormRow
+              label="Role"
+              helpText={!fieldState.invalid && "Friendly help text."}
               isInvalid={fieldState.invalid}
-            />
-          </EuiFormRow>
-        )}
-      />
+              error={fieldState.error?.message}
+            >
+              <EuiSelect
+                hasNoInitialSelection
+                options={roleOptions}
+                {...field}
+                isInvalid={fieldState.invalid}
+              />
+            </EuiFormRow>
+          )}
+        />
 
-      <EuiButton type="submit" fill>
-        Save form
-      </EuiButton>
-    </EuiForm>
+        {!formId && (
+          <EuiButton type="submit" fill>
+            Save form
+          </EuiButton>
+        )}
+      </EuiForm>
+    </>
   );
 };
 

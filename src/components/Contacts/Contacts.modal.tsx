@@ -14,6 +14,8 @@ const ContactsModal: ContactsModalComponent = ({
   formId,
   onClick,
   onClose,
+  title,
+  actionLabel = "Save",
   children,
 }) => {
   const titleId = useGeneratedHtmlId({ prefix: "modalPrefix" });
@@ -32,17 +34,15 @@ const ContactsModal: ContactsModalComponent = ({
       initialFocus="[name=popswitch]"
     >
       <EuiModalHeader>
-        <EuiModalHeaderTitle id={titleId}>
-          Create a new Contact
-        </EuiModalHeaderTitle>
-        <EuiModalBody>{children}</EuiModalBody>
-        <EuiModalFooter>
-          <EuiButtonEmpty onClick={handleClose}>Cancel</EuiButtonEmpty>
-          <EuiButton type="submit" form={formId} onClick={handleClick} fill>
-            Save
-          </EuiButton>
-        </EuiModalFooter>
+        <EuiModalHeaderTitle id={titleId}>{title}</EuiModalHeaderTitle>
       </EuiModalHeader>
+      <EuiModalBody>{children}</EuiModalBody>
+      <EuiModalFooter>
+        <EuiButtonEmpty onClick={handleClose}>Cancel</EuiButtonEmpty>
+        <EuiButton type="submit" form={formId} onClick={handleClick} fill>
+          {actionLabel}
+        </EuiButton>
+      </EuiModalFooter>
     </EuiModal>
   );
 };

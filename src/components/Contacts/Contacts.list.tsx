@@ -18,7 +18,11 @@ const ContactsList = () => {
   return (
     <>
       {isAddModalVisible && (
-        <ContactsModal formId={addModalFormId} onClose={closeAddModal}>
+        <ContactsModal
+          title={"Create a new Contact"}
+          formId={addModalFormId}
+          onClose={closeAddModal}
+        >
           <ContactsForm formId={addModalFormId} />
         </ContactsModal>
       )}

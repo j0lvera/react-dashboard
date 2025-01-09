@@ -26,6 +26,8 @@ interface ContactsModalProps extends PropsWithChildren {
   formId?: string;
   onClose?: () => void;
   onClick?: () => void;
+  title: string;
+  actionLabel?: string;
 }
 
 type ContactsModalComponent = (
