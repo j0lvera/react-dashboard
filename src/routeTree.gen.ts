@@ -13,7 +13,8 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ContactsImport } from './routes/contacts'
+import { Route as LayoutImport } from './routes/_layout'
+import { Route as LayoutContactsImport } from './routes/_layout.contacts'
 
 // Create Virtual Routes
 
@@ -28,9 +29,8 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
-const ContactsRoute = ContactsImport.update({
-  id: '/contacts',
-  path: '/contacts',
+const LayoutRoute = LayoutImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +39,12 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const LayoutContactsRoute = LayoutContactsImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -51,11 +57,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/contacts': {
-      id: '/contacts'
-      path: '/contacts'
-      fullPath: '/contacts'
-      preLoaderRoute: typeof ContactsImport
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -65,48 +71,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/_layout/contacts': {
+      id: '/_layout/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof LayoutContactsImport
+      parentRoute: typeof LayoutImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface LayoutRouteChildren {
+  LayoutContactsRoute: typeof LayoutContactsRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutContactsRoute: LayoutContactsRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/contacts': typeof ContactsRoute
+  '': typeof LayoutRouteWithChildren
   '/about': typeof AboutLazyRoute
+  '/contacts': typeof LayoutContactsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/contacts': typeof ContactsRoute
+  '': typeof LayoutRouteWithChildren
   '/about': typeof AboutLazyRoute
+  '/contacts': typeof LayoutContactsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
-  '/contacts': typeof ContactsRoute
+  '/_layout': typeof LayoutRouteWithChildren
   '/about': typeof AboutLazyRoute
+  '/_layout/contacts': typeof LayoutContactsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contacts' | '/about'
+  fullPaths: '/' | '' | '/about' | '/contacts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contacts' | '/about'
-  id: '__root__' | '/' | '/contacts' | '/about'
+  to: '/' | '' | '/about' | '/contacts'
+  id: '__root__' | '/' | '/_layout' | '/about' | '/_layout/contacts'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  ContactsRoute: typeof ContactsRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
   AboutLazyRoute: typeof AboutLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  ContactsRoute: ContactsRoute,
+  LayoutRoute: LayoutRouteWithChildren,
   AboutLazyRoute: AboutLazyRoute,
 }
 
@@ -121,18 +148,25 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/contacts",
+        "/_layout",
         "/about"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/contacts": {
-      "filePath": "contacts.tsx"
+    "/_layout": {
+      "filePath": "_layout.tsx",
+      "children": [
+        "/_layout/contacts"
+      ]
     },
     "/about": {
       "filePath": "about.lazy.tsx"
+    },
+    "/_layout/contacts": {
+      "filePath": "_layout.contacts.tsx",
+      "parent": "/_layout"
     }
   }
 }

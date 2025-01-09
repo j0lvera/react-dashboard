@@ -1,6 +1,6 @@
 import { getRouteApi } from "@tanstack/react-router";
 
-const contactsRouteApi = getRouteApi("/contacts");
+const contactsRouteApi = getRouteApi("/_layout/contacts");
 
 const ContactsList = () => {
   const data = contactsRouteApi.useLoaderData();
