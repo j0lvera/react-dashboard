@@ -6,15 +6,15 @@ import {
   EuiFormRow,
   EuiSelect,
 } from "@elastic/eui";
-import { roles } from "./Contacts.type.ts";
+import { roles, ContactsFormComponent } from "./Contacts.type.ts";
 
-const ContactsForm = () => {
+const ContactsForm: ContactsFormComponent = ({ id }) => {
   const roleOptions = Object.keys(roles).map((role) => ({
     value: role,
     text: role,
   }));
   return (
-    <EuiForm component="form">
+    <EuiForm component="form" id={id}>
       <EuiFormRow label="Name" helpText={"Friendly help text."}>
         <EuiFieldText placeholder={"e.g., John Doe"} />
       </EuiFormRow>

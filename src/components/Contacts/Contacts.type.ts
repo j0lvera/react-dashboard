@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 
 const roles = {
   Admin: "admin",
@@ -18,6 +18,18 @@ interface Contact {
   age: number;
 }
 
+// Modal types
+interface ContactsModalProps extends PropsWithChildren {
+  formId?: string;
+  onClose?: () => void;
+  onClick?: () => void;
+}
+
+type ContactsModalComponent = (
+  props: ContactsModalProps,
+) => ReactElement | null;
+
+// Table types
 interface ContactsTableProps {
   data: Contact[];
 }
@@ -26,5 +38,21 @@ type ContactsTableComponent = (
   props: ContactsTableProps,
 ) => ReactElement | null;
 
+// Form types
+interface ContactsFormProps {
+  id?: string;
+  formId?: string;
+}
+
+type ContactsFormComponent = (props: ContactsFormProps) => ReactElement | null;
+
 export { roles };
-export type { Contact, ContactsTableComponent, ContactsTableProps };
+export type {
+  Contact,
+  ContactsModalProps,
+  ContactsModalComponent,
+  ContactsTableComponent,
+  ContactsTableProps,
+  ContactsFormComponent,
+  ContactsFormProps,
+};
