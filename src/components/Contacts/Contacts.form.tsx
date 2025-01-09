@@ -17,15 +17,18 @@ const ContactsForm: ContactsFormComponent = ({
   formId,
   defaultValues,
   onSubmit,
+  isLoading,
 }) => {
   const { control, handleSubmit } = useForm<ContactCreate>({
     defaultValues,
   });
 
-  const roleOptions = Object.keys(roles).map((role) => ({
-    value: role,
-    text: role,
+  const roleOptions = Object.entries(roles).map(([key, value]) => ({
+    text: key,
+    value: value,
   }));
+
+  console.info("role options", roleOptions);
 
   const submitHandler: SubmitHandler<ContactCreate> = (data) => {
     onSubmit?.(data);
@@ -130,7 +133,7 @@ const ContactsForm: ContactsFormComponent = ({
         />
 
         {!formId && (
-          <EuiButton type="submit" fill>
+          <EuiButton type="submit" fill isLoading={isLoading}>
             Save form
           </EuiButton>
         )}

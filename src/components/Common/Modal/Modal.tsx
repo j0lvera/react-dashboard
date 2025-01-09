@@ -16,6 +16,7 @@ const Modal: ModalComponent = ({
   onClose,
   title,
   actionLabel = "Save",
+  isLoading,
   children,
 }) => {
   const titleId = useGeneratedHtmlId({ prefix: "modalPrefix" });
@@ -39,7 +40,13 @@ const Modal: ModalComponent = ({
       <EuiModalBody>{children}</EuiModalBody>
       <EuiModalFooter>
         <EuiButtonEmpty onClick={handleClose}>Cancel</EuiButtonEmpty>
-        <EuiButton type="submit" form={formId} onClick={handleClick} fill>
+        <EuiButton
+          type="submit"
+          form={formId}
+          onClick={handleClick}
+          fill
+          isLoading={isLoading}
+        >
           {actionLabel}
         </EuiButton>
       </EuiModalFooter>

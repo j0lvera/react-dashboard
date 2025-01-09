@@ -6,6 +6,7 @@ interface ModalProps extends PropsWithChildren {
   onClick?: () => void;
   title: string;
   actionLabel?: string;
+  isLoading?: boolean;
 }
 
 type ModalComponent = (props: ModalProps) => ReactElement | null;

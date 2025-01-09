@@ -1,12 +1,17 @@
 import { EuiPageTemplate, EuiButton } from "@elastic/eui";
-import { getRouteApi } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ContactsTable as Table } from "./Contacts.table.tsx";
 import { ContactsForm } from "./Contacts.form.tsx";
 import { useModalUtils, Modal } from "../Common/Modal";
-
-const contactsRouteApi = getRouteApi("/_layout/contacts");
+import { contactsQueryOptions, useCreateContact } from "./Contacts.api.ts";
+import { ContactCreate } from "./Contacts.type.ts";
 
 const ContactsList = () => {
+  const contactsQuery = useSuspenseQuery(contactsQueryOptions);
+  const contacts = contactsQuery.data;
+
+  const createContact = useCreateContact();
+
   const {
     isVisible: isAddModalVisible,
     showModal: showAddModal,
@@ -14,7 +19,21 @@ const ContactsList = () => {
     modalFormId: addModalFormId,
   } = useModalUtils("addModal");
 
-  const data = contactsRouteApi.useLoaderData();
+  const handleSubmit = (contact: ContactCreate) => {
+    createContact.mutate(contact, {
+      onSuccess(res) {
+        console.info("contact created!", res);
+        closeAddModal();
+      },
+      onError(error) {
+        console.error(error);
+      },
+      onSettled() {
+        console.info("mutation finished");
+      },
+    });
+  };
+
   return (
     <>
       {isAddModalVisible && (
@@ -24,7 +43,7 @@ const ContactsList = () => {
           onClose={closeAddModal}
           actionLabel={"Submit"}
         >
-          <ContactsForm formId={addModalFormId} />
+          <ContactsForm formId={addModalFormId} onSubmit={handleSubmit} />
         </Modal>
       )}
       <EuiPageTemplate.Header
@@ -35,7 +54,7 @@ const ContactsList = () => {
         ]}
       />
       <EuiPageTemplate.Section>
-        <Table data={data} />
+        <Table data={contacts} />
       </EuiPageTemplate.Section>
     </>
   );
