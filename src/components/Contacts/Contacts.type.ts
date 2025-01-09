@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 
 const roles = {
-  ADMIN: "admin",
-  EDITOR: "editor",
-  AUTHOR: "author",
-  CONTRIBUTOR: "contributor",
-  SUBSCRIBER: "subscriber",
+  Admin: "admin",
+  Editor: "editor",
+  Author: "author",
+  Contributor: "contributor",
+  Subscriber: "subscriber",
 } as const; // tell TS to use values as literal vs string
 
 type Role = (typeof roles)[keyof typeof roles];

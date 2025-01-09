@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { EuiProvider } from "@elastic/eui";
+import "./icons.ts";
 
 import { routeTree } from "./routeTree.gen.ts";
 
