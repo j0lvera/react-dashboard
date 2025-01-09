@@ -1,5 +1,6 @@
 import { EuiPageTemplate } from "@elastic/eui";
 import { getRouteApi } from "@tanstack/react-router";
+import { ContactsTable as Table } from "./Contacts.table.tsx";
 
 const contactsRouteApi = getRouteApi("/_layout/contacts");
 
@@ -12,17 +13,7 @@ const ContactsList = () => {
         description={"List of contacts"}
       />
       <EuiPageTemplate.Section>
-        <ul>
-          {data.map(({ name, age, role }) => {
-            return (
-              <li key={name}>
-                <p>
-                  {name}, {age} | {role}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
+        <Table data={data} />
       </EuiPageTemplate.Section>
     </>
   );

@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 const roles = {
   ADMIN: "admin",
   EDITOR: "editor",
@@ -8,7 +10,7 @@ const roles = {
 
 type Role = (typeof roles)[keyof typeof roles];
 
-interface Contacts {
+interface Contact {
   id?: string;
   name: string;
   address: string;
@@ -16,5 +18,13 @@ interface Contacts {
   age: number;
 }
 
+interface ContactsTableProps {
+  data: Contact[];
+}
+
+type ContactsTableComponent = (
+  props: ContactsTableProps,
+) => ReactElement | null;
+
 export { roles };
-export type { Contacts };
+export type { Contact, ContactsTableComponent, ContactsTableProps };
