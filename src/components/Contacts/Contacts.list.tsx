@@ -1,30 +1,31 @@
-import { useState } from "react";
-import { EuiPageTemplate, EuiButton, useGeneratedHtmlId } from "@elastic/eui";
+import { EuiPageTemplate, EuiButton } from "@elastic/eui";
 import { getRouteApi } from "@tanstack/react-router";
 import { ContactsTable as Table } from "./Contacts.table.tsx";
 import { ContactsForm } from "./Contacts.form.tsx";
-import { ContactsModal } from "./Contacts.modal.tsx";
+import { useModalUtils, Modal } from "../Common/Modal";
 
 const contactsRouteApi = getRouteApi("/_layout/contacts");
 
 const ContactsList = () => {
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-  const showAddModal = () => setIsAddModalVisible(true);
-  const closeAddModal = () => setIsAddModalVisible(false);
-
-  const addModalFormId = useGeneratedHtmlId({ prefix: "addContactModalForm" });
+  const {
+    isVisible: isAddModalVisible,
+    showModal: showAddModal,
+    closeModal: closeAddModal,
+    modalFormId: addModalFormId,
+  } = useModalUtils("addModal");
 
   const data = contactsRouteApi.useLoaderData();
   return (
     <>
       {isAddModalVisible && (
-        <ContactsModal
+        <Modal
           title={"Create a new Contact"}
           formId={addModalFormId}
           onClose={closeAddModal}
+          actionLabel={"Submit"}
         >
           <ContactsForm formId={addModalFormId} />
-        </ContactsModal>
+        </Modal>
       )}
       <EuiPageTemplate.Header
         pageTitle={"Contacts"}

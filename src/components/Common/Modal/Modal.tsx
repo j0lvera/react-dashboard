@@ -8,9 +8,9 @@ import {
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
 } from "@elastic/eui";
-import { ContactsModalComponent } from "./Contacts.type.ts";
+import { ModalComponent } from "./Modal.types.ts";
 
-const ContactsModal: ContactsModalComponent = ({
+const Modal: ModalComponent = ({
   formId,
   onClick,
   onClose,
@@ -47,4 +47,4 @@ const ContactsModal: ContactsModalComponent = ({
   );
 };
 
-export { ContactsModal };
+export { Modal };
