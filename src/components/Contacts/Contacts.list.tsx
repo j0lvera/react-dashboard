@@ -1,12 +1,14 @@
 import { EuiPageTemplate, EuiButton } from "@elastic/eui";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ContactsTable as Table } from "./Contacts.table.tsx";
 import { ContactsForm } from "./Contacts.form.tsx";
 import { useModalUtils, Modal } from "../Common/Modal";
 import { contactsQueryOptions, useCreateContact } from "./Contacts.api.ts";
 import { ContactCreate } from "./Contacts.type.ts";
+import { CONTACTS_QUERY_KEY } from "./Contacts.constants.ts";
 
 const ContactsList = () => {
+  const queryClient = useQueryClient();
   const contactsQuery = useSuspenseQuery(contactsQueryOptions);
   const contacts = contactsQuery.data;
 
@@ -21,15 +23,20 @@ const ContactsList = () => {
 
   const handleSubmit = (contact: ContactCreate) => {
     createContact.mutate(contact, {
-      onSuccess(res) {
-        console.info("contact created!", res);
+      onError(error, variables, context) {
+        // an error happened
+        console.info("error", error, variables, context);
+      },
+      async onSuccess(data, variables, context) {
+        console.info("contact created!", data, variables, context);
         closeAddModal();
+        await queryClient.invalidateQueries({
+          queryKey: [CONTACTS_QUERY_KEY],
+        });
       },
-      onError(error) {
-        console.error(error);
-      },
-      onSettled() {
-        console.info("mutation finished");
+
+      onSettled(data, error, variables, context) {
+        console.info("mutation finished", data, error, variables, context);
       },
     });
   };
