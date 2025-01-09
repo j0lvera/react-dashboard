@@ -18,6 +18,9 @@ interface Contact {
   age: number;
 }
 
+// CRUD types
+type ContactCreate = Omit<Contact, "id">;
+
 // Modal types
 interface ContactsModalProps extends PropsWithChildren {
   formId?: string;
@@ -40,8 +43,9 @@ type ContactsTableComponent = (
 
 // Form types
 interface ContactsFormProps {
-  id?: string;
   formId?: string;
+  onSubmit?: (contact: ContactCreate) => void;
+  defaultValues?: ContactCreate;
 }
 
 type ContactsFormComponent = (props: ContactsFormProps) => ReactElement | null;
@@ -49,6 +53,7 @@ type ContactsFormComponent = (props: ContactsFormProps) => ReactElement | null;
 export { roles };
 export type {
   Contact,
+  ContactCreate,
   ContactsModalProps,
   ContactsModalComponent,
   ContactsTableComponent,
