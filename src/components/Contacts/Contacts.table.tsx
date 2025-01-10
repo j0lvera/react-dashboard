@@ -1,22 +1,28 @@
-import { useState } from "react";
 import {
-  Comparators,
   Criteria,
   EuiTableFieldDataColumnType,
   EuiBasicTable,
   EuiBasicTableColumn,
-  EuiTableSortingType,
   EuiText,
   EuiSpacer,
   EuiHorizontalRule,
 } from "@elastic/eui";
 import type { Contact, ContactsTableComponent } from "./Contacts.type.ts";
+import { usePagination, useSorting } from "../Common/Table";
 
 const ContactsTable: ContactsTableComponent = ({ data }) => {
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(8);
-  const [sortField, setSortField] = useState<keyof Contact>("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const { sorting, sortedItems, setSortField, setSortDirection } =
+    useSorting<Contact>(data, "name");
+
+  const {
+    paginatedItems,
+    pagination,
+    totalItemCount,
+    pageSize,
+    pageIndex,
+    setPageSize,
+    setPageIndex,
+  } = usePagination<Contact>(sortedItems, 8);
 
   const columns: EuiBasicTableColumn<Contact>[] = [
     {
@@ -75,60 +81,6 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
     }
   };
 
-  // Manually handle pagination
-  const findContacts = (
-    contacts: Contact[],
-    pageIndex: number,
-    pageSize: number,
-    sortField: keyof Contact,
-    sortDirection: "asc" | "desc",
-  ) => {
-    let items;
-
-    if (sortField) {
-      items = contacts
-        .slice(0)
-        .sort(
-          Comparators.property(sortField, Comparators.default(sortDirection)),
-        );
-    } else {
-      items = contacts;
-    }
-
-    let pageOfItems;
-    const len = contacts.length;
-
-    if (!pageIndex && !pageSize) {
-      pageOfItems = items;
-    } else {
-      const startIndex = pageIndex * pageSize;
-      pageOfItems = items.slice(
-        startIndex,
-        Math.min(startIndex + pageSize, len),
-      );
-    }
-
-    return {
-      pageOfItems,
-      totalItemCount: len,
-    };
-  };
-
-  const { pageOfItems, totalItemCount } = findContacts(
-    data,
-    pageIndex,
-    pageSize,
-    sortField,
-    sortDirection,
-  );
-
-  const pagination = {
-    pageIndex,
-    pageSize,
-    totalItemCount,
-    pageSizeOptions: [3, 5, 8],
-  };
-
   const resultsCount =
     pageSize === 0 ? (
       <strong>All</strong>
@@ -141,13 +93,6 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
       </>
     );
 
-  const sorting: EuiTableSortingType<Contact> = {
-    sort: {
-      field: sortField,
-      direction: sortDirection,
-    },
-  };
-
   return (
     <>
       <EuiText size="xs">
@@ -157,7 +102,7 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
       <EuiHorizontalRule margin={"none"} style={{ height: 2 }} />
       <EuiBasicTable
         tableCaption={"Contacts table"}
-        items={pageOfItems}
+        items={paginatedItems}
         rowHeader={"name"}
         rowProps={getRowProps}
         cellProps={getCellProps}
