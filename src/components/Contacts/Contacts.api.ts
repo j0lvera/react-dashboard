@@ -60,9 +60,29 @@ const useUpdateContact = () => {
   });
 };
 
+// DELETE requests
+
+const deleteContacts = async (contact: Contact) => {
+  const id = contact.id;
+  const res: AxiosResponse<Contact> = await api.delete(CONTACTS_API_URL, {
+    params: {
+      id: `eq.${id}`,
+    },
+  });
+  return res.data;
+};
+
+const useDeleteContact = () => {
+  return useMutation({
+    mutationKey: [CONTACTS_MUTATION_KEY, "DELETE"],
+    mutationFn: (contact: Contact) => deleteContacts(contact),
+  });
+};
+
 export {
   fetchContacts,
   contactsQueryOptions,
   useCreateContact,
   useUpdateContact,
+  useDeleteContact,
 };
