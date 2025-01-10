@@ -1,9 +1,11 @@
 import { useState } from "react";
 import {
+  Comparators,
   Criteria,
   EuiTableFieldDataColumnType,
   EuiBasicTable,
   EuiBasicTableColumn,
+  EuiTableSortingType,
   EuiText,
   EuiSpacer,
   EuiHorizontalRule,
@@ -12,12 +14,15 @@ import type { Contact, ContactsTableComponent } from "./Contacts.type.ts";
 
 const ContactsTable: ContactsTableComponent = ({ data }) => {
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
+  const [sortField, setSortField] = useState<keyof Contact>("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const columns: EuiBasicTableColumn<Contact>[] = [
     {
       field: "name",
       name: "Name",
+      sortable: true,
       // mobileOptions: {
       //   render: (contact: Contact) => <div></div>
       // }
@@ -25,15 +30,18 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
     {
       field: "age",
       name: "Age",
+      sortable: true,
     },
 
     {
       field: "address",
       name: "Address",
+      sortable: true,
     },
     {
       field: "role",
       name: "Role",
+      sortable: true,
     },
   ];
 
@@ -53,11 +61,17 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
   });
 
   // Pagination logic
-  const onTableChange = ({ page }: Criteria<Contact>) => {
+  const onTableChange = ({ page, sort }: Criteria<Contact>) => {
     if (page) {
       const { index, size } = page;
       setPageIndex(index);
       setPageSize(size);
+    }
+
+    if (sort) {
+      const { field, direction } = sort;
+      setSortField(field);
+      setSortDirection(direction);
     }
   };
 
@@ -66,15 +80,29 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
     contacts: Contact[],
     pageIndex: number,
     pageSize: number,
+    sortField: keyof Contact,
+    sortDirection: "asc" | "desc",
   ) => {
+    let items;
+
+    if (sortField) {
+      items = contacts
+        .slice(0)
+        .sort(
+          Comparators.property(sortField, Comparators.default(sortDirection)),
+        );
+    } else {
+      items = contacts;
+    }
+
     let pageOfItems;
     const len = contacts.length;
 
     if (!pageIndex && !pageSize) {
-      pageOfItems = contacts;
+      pageOfItems = items;
     } else {
       const startIndex = pageIndex * pageSize;
-      pageOfItems = contacts.slice(
+      pageOfItems = items.slice(
         startIndex,
         Math.min(startIndex + pageSize, len),
       );
@@ -90,13 +118,15 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
     data,
     pageIndex,
     pageSize,
+    sortField,
+    sortDirection,
   );
 
   const pagination = {
     pageIndex,
     pageSize,
     totalItemCount,
-    pageSizeOptions: [10, 0],
+    pageSizeOptions: [3, 5, 8],
   };
 
   const resultsCount =
@@ -110,6 +140,13 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
         of {totalItemCount}
       </>
     );
+
+  const sorting: EuiTableSortingType<Contact> = {
+    sort: {
+      field: sortField,
+      direction: sortDirection,
+    },
+  };
 
   return (
     <>
@@ -126,6 +163,7 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
         cellProps={getCellProps}
         columns={columns}
         onChange={onTableChange}
+        sorting={sorting}
         pagination={pagination}
       />
     </>
