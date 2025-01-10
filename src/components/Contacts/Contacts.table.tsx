@@ -3,6 +3,7 @@ import {
   EuiTableFieldDataColumnType,
   EuiBasicTable,
   EuiBasicTableColumn,
+  DefaultItemAction,
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
@@ -31,6 +32,25 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
   const selectable = () => true;
   const { selection, selectedItems } = useSelection<Contact>(selectable);
 
+  const actions: DefaultItemAction<Contact>[] = [
+    {
+      name: "Edit",
+      type: "icon",
+      description: "Edit contact",
+      icon: "pencil",
+      color: "text",
+      onClick: (contact: Contact) => console.info("Edit", contact.name),
+    },
+    {
+      name: "Delete",
+      type: "icon",
+      description: "Delete contact",
+      icon: "trash",
+      color: "danger",
+      onClick: (contact: Contact) => console.info("Delete", contact.name),
+    },
+  ];
+
   const columns: EuiBasicTableColumn<Contact>[] = [
     {
       field: "name",
@@ -50,11 +70,16 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
       field: "address",
       name: "Address",
       sortable: true,
+      truncateText: true,
     },
     {
       field: "role",
       name: "Role",
       sortable: true,
+    },
+    {
+      name: "Actions",
+      actions,
     },
   ];
 

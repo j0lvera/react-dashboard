@@ -1,19 +1,12 @@
 import { useState } from "react";
 import {
   Comparators,
-  EuiTableSortingType,
   EuiTableSelectionType,
+  EuiTableSortingType,
 } from "@elastic/eui";
+import type { SortFn, SortField, SelectableFn } from "./Table.types.ts";
 
-// ensure that the sortField is a key of T, but also that it's a string
-type SortField<T extends object> = Extract<keyof T, string>;
-
-type SortFn = <T extends object>(
-  items: T[],
-  sortField: SortField<T>,
-  sortDirection: "asc" | "desc",
-) => T[];
-
+// sorting
 const sort: SortFn = <T extends object>(
   items: T[],
   sortField: SortField<T>,
@@ -61,6 +54,7 @@ const useSorting = <T extends object>(
   };
 };
 
+// pagination
 const paginate = <T>(items: T[], pageIndex: number, pageSize: number) => {
   let pageOfItems;
   const len = items.length;
@@ -106,8 +100,7 @@ const usePagination = <T>(items: T[], defaultPageSize: number = 0) => {
   };
 };
 
-type SelectableFn = <T>(item: T) => boolean;
-
+// selection
 const useSelection = <T>(selectableFn: SelectableFn) => {
   const [selectedItems, setSelectedItems] = useState<T[]>([]);
 
