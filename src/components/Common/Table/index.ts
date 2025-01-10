@@ -1,3 +1,3 @@
-import { usePagination, useSorting } from "./Table.utils.ts";
+import { usePagination, useSorting, useSelection } from "./Table.utils.ts";
 
-export { usePagination, useSorting };
+export { usePagination, useSorting, useSelection };

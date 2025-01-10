@@ -3,12 +3,14 @@ import {
   EuiTableFieldDataColumnType,
   EuiBasicTable,
   EuiBasicTableColumn,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiText,
   EuiSpacer,
   EuiHorizontalRule,
 } from "@elastic/eui";
 import type { Contact, ContactsTableComponent } from "./Contacts.type.ts";
-import { usePagination, useSorting } from "../Common/Table";
+import { usePagination, useSorting, useSelection } from "../Common/Table";
 
 const ContactsTable: ContactsTableComponent = ({ data }) => {
   const { sorting, sortedItems, setSortField, setSortDirection } =
@@ -23,6 +25,11 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
     setPageSize,
     setPageIndex,
   } = usePagination<Contact>(sortedItems, 8);
+
+  // TODO:
+  // - [ ] e.g., return contact.role === "subscriber"
+  const selectable = () => true;
+  const { selection, selectedItems } = useSelection<Contact>(selectable);
 
   const columns: EuiBasicTableColumn<Contact>[] = [
     {
@@ -95,14 +102,24 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
 
   return (
     <>
-      <EuiText size="xs">
-        Showing {resultsCount} <strong>Users</strong>
-      </EuiText>
+      <EuiFlexGroup justifyContent={"spaceAround"}>
+        <EuiFlexItem>
+          <EuiText size="xs">
+            Showing {resultsCount} <strong>Users</strong>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiText size={"xs"}>
+            Selected <strong>{selectedItems?.length}</strong>
+          </EuiText>
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <EuiSpacer size={"s"} />
       <EuiHorizontalRule margin={"none"} style={{ height: 2 }} />
       <EuiBasicTable
         tableCaption={"Contacts table"}
         items={paginatedItems}
+        itemId={"id"}
         rowHeader={"name"}
         rowProps={getRowProps}
         cellProps={getCellProps}
@@ -110,6 +127,7 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
         onChange={onTableChange}
         sorting={sorting}
         pagination={pagination}
+        selection={selection}
       />
     </>
   );

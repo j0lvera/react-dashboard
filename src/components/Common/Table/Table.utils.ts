@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { Comparators, EuiTableSortingType } from "@elastic/eui";
+import {
+  Comparators,
+  EuiTableSortingType,
+  EuiTableSelectionType,
+} from "@elastic/eui";
 
 type SortFn = <T>(
   items: T[],
@@ -99,4 +103,22 @@ const usePagination = <T>(items: T[], defaultPageSize: number = 0) => {
   };
 };
 
-export { usePagination, useSorting };
+type SelectableFn = <T>(item: T) => boolean;
+
+const useSelection = <T>(selectableFn: SelectableFn) => {
+  const [selectedItems, setSelectedItems] = useState<T[]>([]);
+
+  const onSelectionChange = (selectedItems: T[]) => {
+    setSelectedItems(selectedItems);
+  };
+
+  const selection: EuiTableSelectionType<T> = {
+    selectable: selectableFn,
+    onSelectionChange,
+    selected: selectedItems,
+  };
+
+  return { selection, selectedItems, setSelectedItems, onSelectionChange };
+};
+
+export { usePagination, useSorting, useSelection };
