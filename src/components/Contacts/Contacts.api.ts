@@ -8,6 +8,8 @@ import {
 } from "./Contacts.constants.ts";
 import type { Contact, ContactCreate } from "./Contacts.type.ts";
 
+// GET requests
+
 const fetchContacts = async () => {
   const res: AxiosResponse<Contact[]> = await api.get(CONTACTS_API_URL);
   return res.data;
@@ -18,10 +20,13 @@ const contactsQueryOptions = queryOptions({
   queryFn: () => fetchContacts(),
 });
 
+// POST requests
+
 const postContacts = async (contact: ContactCreate) => {
   const res: AxiosResponse<Contact> = await api.post(CONTACTS_API_URL, contact);
   return res.data;
 };
+
 const useCreateContact = () => {
   return useMutation({
     mutationKey: [CONTACTS_MUTATION_KEY],
