@@ -5,15 +5,18 @@ import {
   EuiTableSelectionType,
 } from "@elastic/eui";
 
-type SortFn = <T>(
+// ensure that the sortField is a key of T, but also that it's a string
+type SortField<T extends object> = Extract<keyof T, string>;
+
+type SortFn = <T extends object>(
   items: T[],
-  sortField: keyof T,
+  sortField: SortField<T>,
   sortDirection: "asc" | "desc",
 ) => T[];
 
-const sort: SortFn = <T>(
+const sort: SortFn = <T extends object>(
   items: T[],
-  sortField: keyof T,
+  sortField: SortField<T>,
   sortDirection: "asc" | "desc",
 ) => {
   let sortedItems;
@@ -31,12 +34,12 @@ const sort: SortFn = <T>(
   return sortedItems;
 };
 
-const useSorting = <T>(
+const useSorting = <T extends object>(
   data: T[],
-  defaultSortField: keyof T,
+  defaultSortField: SortField<T>,
   sortFn: SortFn = sort,
 ) => {
-  const [sortField, setSortField] = useState<keyof T>(defaultSortField);
+  const [sortField, setSortField] = useState<SortField<T>>(defaultSortField);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const sortedItems = sortFn(data, sortField, sortDirection);
