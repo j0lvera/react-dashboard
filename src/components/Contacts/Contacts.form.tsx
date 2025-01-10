@@ -17,7 +17,10 @@ const ContactsForm: ContactsFormComponent = ({
     value: value,
   }));
 
-  console.info("role options", roleOptions);
+  // console.group("ContactsForm");
+  // console.info("default values", defaultValues);
+  // console.info("role options", roleOptions);
+  // console.groupEnd();
 
   const handleSubmit = (data: ContactCreate) => {
     onSubmit?.(data);

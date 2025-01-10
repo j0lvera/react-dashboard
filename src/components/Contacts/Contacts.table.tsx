@@ -13,7 +13,7 @@ import {
 import type { Contact, ContactsTableComponent } from "./Contacts.type.ts";
 import { usePagination, useSorting, useSelection } from "../Common/Table";
 
-const ContactsTable: ContactsTableComponent = ({ data }) => {
+const ContactsTable: ContactsTableComponent = ({ data, onEdit, onDelete }) => {
   const { sorting, sortedItems, setSortField, setSortDirection } =
     useSorting<Contact>(data, "name");
 
@@ -39,7 +39,10 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
       description: "Edit contact",
       icon: "pencil",
       color: "text",
-      onClick: (contact: Contact) => console.info("Edit", contact.name),
+      onClick: (contact: Contact) => {
+        console.info("Edit", contact.name);
+        onEdit?.(contact);
+      },
     },
     {
       name: "Delete",
@@ -47,7 +50,10 @@ const ContactsTable: ContactsTableComponent = ({ data }) => {
       description: "Delete contact",
       icon: "trash",
       color: "danger",
-      onClick: (contact: Contact) => console.info("Delete", contact.name),
+      onClick: (contact: Contact) => {
+        console.info("Delete", contact.name);
+        onDelete?.(contact);
+      },
     },
   ];
 

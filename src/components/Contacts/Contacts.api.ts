@@ -6,7 +6,7 @@ import {
   CONTACTS_MUTATION_KEY,
   CONTACTS_API_URL,
 } from "./Contacts.constants.ts";
-import type { Contact, ContactCreate } from "./Contacts.type.ts";
+import type { Contact, ContactCreate, ContactUpdate } from "./Contacts.type.ts";
 
 // GET requests
 
@@ -34,4 +34,35 @@ const useCreateContact = () => {
   });
 };
 
-export { fetchContacts, contactsQueryOptions, useCreateContact };
+// PATH requests
+
+const putContacts = async (contact: ContactUpdate) => {
+  const id = contact.id;
+  // we must remove id from contact, otherwise the API will throw an error
+  // because it will try to update the id field, and it's a read-only (identity) field
+  delete contact.id;
+  const res: AxiosResponse<ContactUpdate> = await api.patch(
+    CONTACTS_API_URL,
+    contact,
+    {
+      params: {
+        id: `eq.${id}`,
+      },
+    },
+  );
+  return res.data;
+};
+
+const useUpdateContact = () => {
+  return useMutation({
+    mutationKey: [CONTACTS_MUTATION_KEY, "UPDATE"],
+    mutationFn: (contact: Contact) => putContacts(contact),
+  });
+};
+
+export {
+  fetchContacts,
+  contactsQueryOptions,
+  useCreateContact,
+  useUpdateContact,
+};

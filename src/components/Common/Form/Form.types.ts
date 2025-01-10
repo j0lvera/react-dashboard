@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactElement } from "react";
 import {
+  DefaultValues,
   Control,
   ControllerProps,
   // ControllerRenderProps,
@@ -9,7 +10,7 @@ import {
 // Form
 interface FormProps<T extends FieldValues> {
   formId?: string;
-  defaultValues?: T;
+  defaultValues?: DefaultValues<T>;
   onSubmit?: (data: T) => void;
   isLoading?: boolean;
   children: (props: { control: Control<T> }) => ReactElement;

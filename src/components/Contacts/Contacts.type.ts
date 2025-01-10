@@ -21,9 +21,14 @@ interface Contact {
 // CRUD types
 type ContactCreate = Omit<Contact, "id">;
 
+// we must enforce that id is not optional
+type ContactUpdate = Partial<ContactCreate> & Pick<Contact, "id">;
+
 // Table types
 interface ContactsTableProps {
   data: Contact[];
+  onEdit?: (contact: Contact) => void;
+  onDelete?: (contact: Contact) => void;
 }
 
 type ContactsTableComponent = (
@@ -44,6 +49,7 @@ export { roles };
 export type {
   Contact,
   ContactCreate,
+  ContactUpdate,
   ContactsTableComponent,
   ContactsTableProps,
   ContactsFormComponent,

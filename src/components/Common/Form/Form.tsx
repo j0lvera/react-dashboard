@@ -9,9 +9,13 @@ const Form = <T extends FieldValues>({
   isLoading,
   children,
 }: FormProps<T>) => {
-  const options = !defaultValues ? { defaultValues } : {};
+  console.group("Form");
+  console.info(defaultValues);
+  console.groupEnd();
 
-  const { control, handleSubmit } = useForm<T>(options);
+  const { control, handleSubmit } = useForm<T>({
+    defaultValues,
+  });
 
   const submitHandler: SubmitHandler<T> = (data) => {
     onSubmit?.(data);
