@@ -12,19 +12,30 @@ import {
 } from "@elastic/eui";
 import type { Contact, ContactsTableComponent } from "./Contacts.type.ts";
 import { usePagination, useSorting, useSelection } from "../Common/Table";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 
-const ContactsTable: ContactsTableComponent = ({ data, onEdit, onDelete }) => {
+const contactListRouteApi = getRouteApi("/_layout/contacts");
+
+const ContactsTable: ContactsTableComponent = ({
+  data,
+  pagination,
+  onEdit,
+  onDelete,
+}) => {
+  const navigate = useNavigate({ from: "/contacts" });
+  const { page: pageIndex, size: pageSize } = contactListRouteApi.useSearch();
+
   const { sorting, sortedItems, setSortField, setSortDirection } =
     useSorting<Contact>(data, "name");
 
   const {
     paginatedItems,
-    pagination,
-    totalItemCount,
-    pageSize,
-    pageIndex,
-    setPageSize,
-    setPageIndex,
+    // pagination,
+    // totalItemCount,
+    // pageSize,
+    // pageIndex,
+    // setPageSize,
+    // setPageIndex,
   } = usePagination<Contact>(sortedItems, 8);
 
   // TODO:
@@ -108,8 +119,15 @@ const ContactsTable: ContactsTableComponent = ({ data, onEdit, onDelete }) => {
   const onTableChange = ({ page, sort }: Criteria<Contact>) => {
     if (page) {
       const { index, size } = page;
-      setPageIndex(index);
-      setPageSize(size);
+      (async () => {
+        await navigate({
+          search: (prev) => ({
+            ...prev,
+            page: index,
+            size,
+          }),
+        });
+      })();
     }
 
     if (sort) {
@@ -120,16 +138,23 @@ const ContactsTable: ContactsTableComponent = ({ data, onEdit, onDelete }) => {
   };
 
   const resultsCount =
-    pageSize === 0 ? (
+    pagination?.total === 0 ? (
       <strong>All</strong>
     ) : (
       <>
         <strong>
           {pageSize * pageIndex + 1}-{pageSize * pageIndex + pageSize}
         </strong>{" "}
-        of {totalItemCount}
+        of {pagination?.total}
       </>
     );
+
+  const serverPagination = {
+    pageIndex, // current page index, i.e., ?page=1
+    pageSize, // number of items per page, i.e., ?size=10
+    totalItemCount: pagination?.total ?? 0, // from header range, e.g., 3-5/10
+    pageSizeOptions: [3, 5, 8],
+  };
 
   return (
     <>
@@ -157,7 +182,7 @@ const ContactsTable: ContactsTableComponent = ({ data, onEdit, onDelete }) => {
         columns={columns}
         onChange={onTableChange}
         sorting={sorting}
-        pagination={pagination}
+        pagination={serverPagination}
         selection={selection}
       />
     </>

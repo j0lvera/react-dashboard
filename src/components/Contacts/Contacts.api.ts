@@ -1,4 +1,8 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import { api } from "../../api.ts";
 import {
@@ -7,18 +11,39 @@ import {
   CONTACTS_API_URL,
 } from "./Contacts.constants.ts";
 import type { Contact, ContactCreate, ContactUpdate } from "./Contacts.type.ts";
+import { parseRange } from "./Contacts.utils.ts";
 
 // GET requests
 
-const fetchContacts = async () => {
-  const res: AxiosResponse<Contact[]> = await api.get(CONTACTS_API_URL);
-  return res.data;
+const fetchContacts = async (page: number, size: number) => {
+  const offset = page * size;
+  const res: AxiosResponse<Contact[]> = await api.get(CONTACTS_API_URL, {
+    params: {
+      offset,
+      limit: size,
+    },
+    // REQUIRED for pagination
+    headers: {
+      Prefer: "count=exact",
+    },
+  });
+
+  // we need to parse the range header to get the total number of contacts
+  const range = res.headers["content-range"];
+  const pagination = parseRange(range);
+
+  return {
+    data: res.data,
+    pagination,
+  };
 };
 
-const contactsQueryOptions = queryOptions({
-  queryKey: [CONTACTS_QUERY_KEY],
-  queryFn: () => fetchContacts(),
-});
+const contactsQueryOptions = (page: number, size: number) =>
+  queryOptions({
+    queryKey: [CONTACTS_QUERY_KEY, page, size],
+    queryFn: () => fetchContacts(page, size),
+    placeholderData: keepPreviousData,
+  });
 
 // POST requests
 
@@ -36,7 +61,7 @@ const useCreateContact = () => {
 
 // PATH requests
 
-const putContacts = async (contact: ContactUpdate) => {
+const patchContact = async (contact: ContactUpdate) => {
   const id = contact.id;
   // we must remove id from contact, otherwise the API will throw an error
   // because it will try to update the id field, and it's a read-only (identity) field
@@ -56,7 +81,7 @@ const putContacts = async (contact: ContactUpdate) => {
 const useUpdateContact = () => {
   return useMutation({
     mutationKey: [CONTACTS_MUTATION_KEY, "UPDATE"],
-    mutationFn: (contact: Contact) => putContacts(contact),
+    mutationFn: (contact: Contact) => patchContact(contact),
   });
 };
 

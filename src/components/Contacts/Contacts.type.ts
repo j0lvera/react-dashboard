@@ -27,6 +27,7 @@ type ContactUpdate = Partial<ContactCreate> & Pick<Contact, "id">;
 // Table types
 interface ContactsTableProps {
   data: Contact[];
+  pagination?: ContactsPagination;
   onEdit?: (contact: Contact) => void;
   onDelete?: (contact: Contact) => void;
 }
@@ -45,6 +46,13 @@ interface ContactsFormProps {
 
 type ContactsFormComponent = (props: ContactsFormProps) => ReactElement | null;
 
+// Misc
+interface ContactsPagination {
+  start: number;
+  end: number;
+  total: number;
+}
+
 export { roles };
 export type {
   Contact,
@@ -54,4 +62,5 @@ export type {
   ContactsTableProps,
   ContactsFormComponent,
   ContactsFormProps,
+  ContactsPagination,
 };

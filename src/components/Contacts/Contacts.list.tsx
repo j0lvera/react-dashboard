@@ -12,8 +12,12 @@ import {
 } from "./Contacts.api.ts";
 import { Contact, ContactCreate } from "./Contacts.type.ts";
 import { CONTACTS_QUERY_KEY } from "./Contacts.constants.ts";
+import { getRouteApi } from "@tanstack/react-router";
+
+const contactsListRouteApi = getRouteApi("/_layout/contacts");
 
 const ContactsList = () => {
+  const loaderDeps = contactsListRouteApi.useLoaderDeps();
   const queryClient = useQueryClient();
 
   // we use this hook to manage the modal state for both edit and delete modals.
@@ -23,8 +27,11 @@ const ContactsList = () => {
 
   // Query data
 
-  const contactsQuery = useSuspenseQuery(contactsQueryOptions);
-  const contacts = contactsQuery.data;
+  const contactsQuery = useSuspenseQuery(
+    contactsQueryOptions(loaderDeps.page, loaderDeps.size),
+  );
+  const { data: contacts, pagination } = contactsQuery.data;
+  console.info("pagination", pagination);
 
   // CREATE functionality
 
@@ -198,6 +205,7 @@ const ContactsList = () => {
       <EuiPageTemplate.Section>
         <Table
           data={contacts}
+          pagination={pagination}
           onEdit={handleTableItemEdit}
           onDelete={handleTableItemDelete}
         />

@@ -83,9 +83,9 @@ const usePagination = <T>(items: T[], defaultPageSize: number = 0) => {
   );
 
   const pagination = {
-    pageIndex,
-    pageSize,
-    totalItemCount,
+    pageIndex, // current page index, i.e., ?page=1
+    pageSize, // number of items per page, i.e., ?size=10
+    totalItemCount, // total number of items, i.e., header 3-5/10
     pageSizeOptions: [3, 5, 8],
   };
 
